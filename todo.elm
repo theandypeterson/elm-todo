@@ -13,11 +13,13 @@ main =
     , subscriptions = subscriptions
     }
 
+
 type alias Model =
   { list : List Todo
   , newItem : String
   , uid : Int
   }
+
 
 type alias Todo =
   { id : Int
@@ -86,12 +88,15 @@ view model =
     , removeAllButton
     ]
 
+
 renderItem : Todo -> Html Msg
 renderItem todo =
   div []
     [ input [type' "checkbox", checked todo.isChecked, onClick (CheckTodo todo.id)] []
     , if todo.isChecked then s [] [text todo.content] else text todo.content
     ]
+
+
 fancyField : String -> Html Msg
 fancyField content =
   div []
@@ -103,6 +108,7 @@ fancyField content =
         ] []
     ]
 
+
 onEnter : Msg -> Attribute Msg
 onEnter msg =
   let
@@ -110,6 +116,7 @@ onEnter msg =
       if code == 13 then msg else NoOp
   in
     on "keydown" (Json.map tagger keyCode)
+
 
 removeAllButton : Html Msg
 removeAllButton =
