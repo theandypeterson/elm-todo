@@ -18,6 +18,7 @@ type alias Model =
   { list : List Todo
   , newItem : String
   , uid : Int
+  , title : String
   }
 
 
@@ -30,7 +31,7 @@ type alias Todo =
 
 init : (Model, Cmd Msg)
 init =
-  (Model [] "" 1, Cmd.none)
+  (Model [] "" 1 "TODO LIST", Cmd.none)
 
 
 type Msg
@@ -82,12 +83,15 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
   div[]
-    [ h1 [] [text "TODO LIST"]
+    [ title model
     , div [] (List.map renderItem model.list)
     , fancyField model.newItem
     , removeAllButton
     ]
 
+title : Model -> Html Msg
+title model =
+  h1 [] [text model.title]
 
 renderItem : Todo -> Html Msg
 renderItem todo =
