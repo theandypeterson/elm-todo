@@ -108,6 +108,7 @@ renderTitle model =
   if model.isEditingTitle then
     input
       [ value model.newTitle
+      , autofocus True
       , onEnter UpdateTitle
       , onInput ChangeNewTitle
       ] []
