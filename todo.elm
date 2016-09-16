@@ -19,6 +19,8 @@ type alias Model =
   , newItem : String
   , uid : Int
   , title : String
+  , isEditingTitle : Bool
+  , newTitle : String
   }
 
 
@@ -31,7 +33,7 @@ type alias Todo =
 
 init : (Model, Cmd Msg)
 init =
-  (Model [] "" 1 "TODO LIST", Cmd.none)
+  (Model [] "" 1 "TODO LIST" False "", Cmd.none)
 
 
 type Msg
@@ -40,6 +42,9 @@ type Msg
   | ChangeNewItem String
   | ClearList
   | CheckTodo Int
+  | ToggleTitleEdit
+  | UpdateTitle
+  | ChangeNewTitle String
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -74,6 +79,15 @@ update msg model =
        in
         ({ model | list = (List.map markTodo model.list)}, Cmd.none)
 
+    ToggleTitleEdit ->
+      ({ model | isEditingTitle = (not model.isEditingTitle), newTitle = model.title }, Cmd.none)
+
+    UpdateTitle ->
+      ({ model | title = model.newTitle, isEditingTitle = False}, Cmd.none)
+
+    ChangeNewTitle newTitle ->
+      ({ model | newTitle = newTitle }, Cmd.none)
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -83,15 +97,23 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
   div[]
-    [ title model
+    [ renderTitle model
     , div [] (List.map renderItem model.list)
     , fancyField model.newItem
     , removeAllButton
     ]
 
-title : Model -> Html Msg
-title model =
-  h1 [] [text model.title]
+renderTitle : Model -> Html Msg
+renderTitle model =
+  if model.isEditingTitle then
+    input
+      [ value model.newTitle
+      , onEnter UpdateTitle
+      , onInput ChangeNewTitle
+      ] []
+  else 
+    h1 [onClick ToggleTitleEdit] [text model.title]
+
 
 renderItem : Todo -> Html Msg
 renderItem todo =
