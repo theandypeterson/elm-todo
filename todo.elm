@@ -90,7 +90,7 @@ renderItem : Todo -> Html Msg
 renderItem todo =
   div []
     [ input [type' "checkbox", checked todo.isChecked, onClick (CheckTodo todo.id)] []
-    , text (if todo.isChecked then "Done!" else todo.content)
+    , if todo.isChecked then s [] [text todo.content] else text todo.content
     ]
 fancyField : String -> Html Msg
 fancyField content =
