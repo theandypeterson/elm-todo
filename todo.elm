@@ -45,6 +45,7 @@ type Msg
   | ToggleTitleEdit
   | UpdateTitle
   | ChangeNewTitle String
+  | ClearCompleted
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -88,6 +89,12 @@ update msg model =
     ChangeNewTitle newTitle ->
       ({ model | newTitle = newTitle }, Cmd.none)
 
+    ClearCompleted ->
+      let
+        notComplete todo =
+          not todo.isChecked
+      in
+        ({ model | list = (List.filter notComplete model.list) }, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -100,7 +107,10 @@ view model =
     [ renderTitle model
     , div [] (List.map renderItem model.list)
     , fancyField model.newItem
-    , removeAllButton
+    , div []
+      [ removeAllButton
+      , removeCompletedButton
+      ]
     ]
 
 renderTitle : Model -> Html Msg
@@ -112,7 +122,7 @@ renderTitle model =
       , onEnter UpdateTitle
       , onInput ChangeNewTitle
       ] []
-  else 
+  else
     h1 [onClick ToggleTitleEdit] [text model.title]
 
 
@@ -149,3 +159,7 @@ removeAllButton : Html Msg
 removeAllButton =
   button [ onClick ClearList ] [ text "Clear the list" ]
 
+
+removeCompletedButton : Html Msg
+removeCompletedButton =
+  button [ onClick ClearCompleted ] [ text "Clear completed" ]
